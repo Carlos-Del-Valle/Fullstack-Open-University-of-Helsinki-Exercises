@@ -1,16 +1,17 @@
 import React, { useState } from "react";
+import Filter from "./components/Filter";
+import PersonForm from "./components/PersonForm";
+import Persons from "./components/Persons";
 
-const Person = props => {
-    return (
-        <>
-            {props.name} {props.number}
-            <br />
-        </>
-    );
-};
+const initialPersons = [
+    { name: "Arto Hellas", number: "040-123456" },
+    { name: "Ada Lovelace", number: "39-44-5323523" },
+    { name: "Dan Abramov", number: "12-43-234345" },
+    { name: "Mary Poppendieck", number: "39-23-6423122" }
+];
 
 const App = () => {
-    const [persons, setPersons] = useState([{ name: "Arto Hellas", number: "0426877076" }]);
+    const [persons, setPersons] = useState(initialPersons);
     const [newName, setNewName] = useState("");
     const [newNumber, setNewNumber] = useState("");
     const [nameFilter, setNameFilter] = useState("");
@@ -23,22 +24,35 @@ const App = () => {
         return person.name.toLocaleLowerCase().includes(nameFilter.toLowerCase());
     });
 
-    const personsList = filteredPersons.map(person => {
-        return (
-            <Person key={person.name} name={person.name} number={person.number} />
-        );
-    });
-
-    const handleChangeName = event => {
-        setNewName(event.target.value);
+    const handleChange = (event, type) => {
+        switch (type) {
+            case "nameFilter":
+                setNameFilter(event.target.value);
+                break;
+            case "name":
+                setNewName(event.target.value);
+                break;
+            case "number":
+                setNewNumber(event.target.value);
+                break;
+            default:
+                break;
+        }
     };
 
-    const handleChangeNumber = event => {
-        setNewNumber(event.target.value);
-    };
+    const createNewPerson = () => {
+        const replacer = (match, p1, p2) => {
+            return p1.toUpperCase() + p2.toLocaleLowerCase();
+        };
 
-    const handleChangeFilter = event => {
-        setNameFilter(event.target.value);
+        const titleCasedName = newName.replace(/\b([a-zA-Z])(\w+)/g, replacer);
+
+        const person = {
+            name: titleCasedName,
+            number: newNumber
+        };
+
+        return person;
     };
 
     const handleSubmit = event => {
@@ -47,17 +61,7 @@ const App = () => {
         if (lowerCasedNames.includes(newName.toLocaleLowerCase())) {
             alert(`${newName} is already added to the phonebook.`);
         } else {
-            const replacer = (match, p1, p2) => {
-                return p1.toUpperCase() + p2.toLocaleLowerCase();
-            };
-
-            const titleCasedName = newName.replace(/\b([a-zA-Z])(\w+)/g, replacer);
-
-            const person = {
-                name: titleCasedName,
-                number: newNumber
-            };
-
+            const person = createNewPerson();
             setPersons([...persons].concat(person));
         }
 
@@ -68,27 +72,28 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
-            Filter by Name:{" "}
-            <input
-                onChange={event => handleChangeFilter(event)} value={nameFilter}/>
-            <form onSubmit={event => handleSubmit(event)}>
-                <h2>Add a new</h2>
-                <div>
-                    name:{" "}
-                    <input onChange={event => handleChangeName(event)} value={newName} />
-                </div>
-                <div>
-                    number:{" "}
-                    <input onChange={event => handleChangeNumber(event)} value={newNumber}/>
-                </div>
-                <div>
-                    <button type="submit">add</button>
-                </div>
-            </form>
-            <h2>Names & Numbers</h2>
-            {personsList}
+
+            <Filter
+                handleFilterChange={event => handleChange(event, "nameFilter")}
+                value={nameFilter}
+            />
+
+            <h3>Add a New:</h3>
+
+            <PersonForm
+                nameValue={newName}
+                numberValue={newNumber}
+                handleSubmit={event => handleSubmit(event)}
+                handleNameChange={event => handleChange(event, "name")}
+                handleNumberChange={event => handleChange(event, "number")}
+            />
+
+            <h3>Numbers</h3>
+
+            <Persons persons={filteredPersons} />
         </div>
     );
 };
 
 export default App;
+
