@@ -4,24 +4,31 @@ const Person = props => {
     return (
         <>
             {props.name}
+            {props.number}
             <br />
         </>
     );
 };
 
 const App = () => {
-    const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
+    const [persons, setPersons] = useState([{ name: "Arto Hellas", number: "-0426877076" }]);
     const [newName, setNewName] = useState("");
+    const [newNumber, setNewNumber] = useState("");
+
     const names = persons.map(person => {
         return person.name.toLocaleLowerCase();
     });
 
     const personsList = persons.map(person => {
-        return <Person key={person.name} name={person.name} />;
+        return <Person key={person.name} name={person.name} number={person.number}/>;
     });
 
-    const handleChange = event => {
+    const handleChangeName = event => {
         setNewName(event.target.value);
+    };
+
+    const handleChangeNumber = event => {
+        setNewNumber(event.target.value);
     };
 
     const handleSubmit = event => {
@@ -37,13 +44,15 @@ const App = () => {
             const titleCasedName = newName.replace(/\b([a-zA-Z])(\w+)/g, replacer);
 
             const person = {
-                name: titleCasedName
+                name: titleCasedName,
+                number: `-${newNumber}`
             };
 
             setPersons([...persons].concat(person));
         }
 
         setNewName("");
+        setNewNumber("");
     };
 
     return (
@@ -52,7 +61,11 @@ const App = () => {
             <form onSubmit={event => handleSubmit(event)}>
                 <div>
                     name:{" "}
-                    <input onChange={event => handleChange(event)} value={newName} />
+                    <input onChange={event => handleChangeName(event)} value={newName} />
+                </div>
+                <div>
+                    number:{" "}
+                    <input onChange={event => handleChangeNumber(event)} value={newNumber}/>
                 </div>
                 <div>
                     <button type="submit">add</button>
