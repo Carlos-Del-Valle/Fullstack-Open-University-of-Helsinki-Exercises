@@ -3,8 +3,8 @@ import React from "react";
 const Filter = props => {
     return (
         <div>
-            Filter by Name:{" "}
-            <input onChange={props.handleFilterChange} value={props.value} />
+            <label>by Name: </label>
+            <input onChange={props.onChange} value={props.value}></input>
         </div>
     );
 };

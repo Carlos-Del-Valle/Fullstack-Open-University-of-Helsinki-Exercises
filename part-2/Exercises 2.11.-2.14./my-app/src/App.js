@@ -1,109 +1,55 @@
-import React, { useState,useEffect } from "react";
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Filter from "./components/Filter";
-import PersonForm from "./components/PersonForm";
-import Persons from "./components/Persons";
+import Countries from "./components/Countries";
 
-const initialPersons = [
-  { name: "Arto Hellas", number: "040-123456" },
-  { name: "Ada Lovelace", number: "39-44-5323523" },
-  { name: "Dan Abramov", number: "12-43-234345" },
-  { name: "Mary Poppendieck", number: "39-23-6423122" }
-];
+function App() {
+  const [countries, setCountries] = useState([]);
+  const [countryFilter, setCountryFilter] = useState("");
+  const [hasFilter, setHasFilter] = useState(false);
 
-const App = () => {
-  const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState("");
-  const [newNumber, setNewNumber] = useState("");
-  const [nameFilter, setNameFilter] = useState("");
+  const fetchCountries = () => {
+    axios.get("https://restcountries.eu/rest/v2/all").then(response => {
+      setCountries(response.data);
+    });
+  };
+  useEffect(fetchCountries, []);
 
-  useEffect(() => {
-    console.log('effect')
-    axios
-        .get('http://localhost:3001/persons')
-        .then(response => {
-          console.log('promise fulfilled')
-          setPersons(response.data)
-        })
-  }, [])
-
-  const lowerCasedNames = persons.map(person => {
-    return person.name.toLocaleLowerCase();
+  const filteredCountries = countries.filter(country => {
+    return country.name.toLowerCase().includes(countryFilter.toLowerCase());
   });
 
-  const filteredPersons = persons.filter(person => {
-    return person.name.toLocaleLowerCase().includes(nameFilter.toLowerCase());
+  const hasExactMatch = filteredCountries.some(country => {
+    return country.name.toLowerCase() === countryFilter.toLowerCase();
   });
 
-  const handleChange = (event, type) => {
-    switch (type) {
-      case "nameFilter":
-        setNameFilter(event.target.value);
-        break;
-      case "name":
-        setNewName(event.target.value);
-        break;
-      case "number":
-        setNewNumber(event.target.value);
-        break;
-      default:
-        break;
-    }
-  };
+  let exactFilteredCountries;
+  if (hasExactMatch) {
+    exactFilteredCountries = filteredCountries.filter(country => {
+      return country.name.toLowerCase() === countryFilter.toLowerCase();
+    });
+  }
 
-  const createNewPerson = () => {
-    const replacer = (match, p1, p2) => {
-      return p1.toUpperCase() + p2.toLocaleLowerCase();
-    };
+  const handleChange = event => {
+    setCountryFilter(event.target.value);
 
-    const titleCasedName = newName.replace(/\b([a-zA-Z])(\w+)/g, replacer);
-
-    const person = {
-      name: titleCasedName,
-      number: newNumber
-    };
-
-    return person;
-  };
-
-  const handleSubmit = event => {
-    event.preventDefault();
-
-    if (lowerCasedNames.includes(newName.toLocaleLowerCase())) {
-      alert(`${newName} is already added to the phonebook.`);
-    } else {
-      const person = createNewPerson();
-      setPersons([...persons].concat(person));
-    }
-
-    setNewName("");
-    setNewNumber("");
+    if (event.target.value === "") setHasFilter(false);
+    else setHasFilter(true);
   };
 
   return (
       <div>
-        <h2>Phonebook</h2>
-
-        <Filter
-            handleFilterChange={event => handleChange(event, "nameFilter")}
-            value={nameFilter}
-        />
-
-        <h3>Add a New:</h3>
-
-        <PersonForm
-            nameValue={newName}
-            numberValue={newNumber}
-            handleSubmit={event => handleSubmit(event)}
-            handleNameChange={event => handleChange(event, "name")}
-            handleNumberChange={event => handleChange(event, "number")}
-        />
-
-        <h3>Numbers</h3>
-
-        <Persons persons={filteredPersons} />
+        <h1>Data For Countries</h1>
+        <Filter onChange={e => handleChange(e)} value={countryFilter} />
+        {hasFilter && hasExactMatch && (
+            <Countries countries={exactFilteredCountries} />
+        )}
+        {hasFilter && !hasExactMatch && (
+            <Countries countries={filteredCountries} />
+        )}
       </div>
   );
-};
+}
 
 export default App;
+
