@@ -87,6 +87,37 @@ const App = () => {
         setNewNumber("");
     };
 
+    const removePersonWithId = id => {
+        let deleted = true;
+
+        personService
+            .remove(id)
+            .catch(err => {
+                console.log(err);
+                deleted = false;
+            })
+            .finally(() => {
+                if (deleted) {
+                    setPersons(persons.filter(p => p.id !== id));
+                }
+            });
+    };
+
+    const handleClick = (event, type) => {
+        switch (type) {
+            case "deletePerson":
+                const id = parseInt(event.target.dataset.id);
+                if (Number.isNaN(id) || !id) break;
+                const person = persons.find(p => p.id === id);
+                const wantsToDelete = window.confirm(`Delete ${person.name}?`);
+                if (wantsToDelete) removePersonWithId(id);
+                break;
+            default:
+                break;
+        }
+    };
+
+
     return (
         <div>
             <h2>Phonebook</h2>
@@ -108,7 +139,11 @@ const App = () => {
 
             <h3>Numbers</h3>
 
-            <Persons persons={filteredPersons} />
+            <Persons
+                persons={filteredPersons}
+                handleClick={event => handleClick(event, "deletePerson")}
+            />
+
         </div>
     );
 };
