@@ -2,13 +2,16 @@ import React, { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import Notifications from "./components/Notification";
 import personsService from "./services/persons";
+
 
 const App = () => {
     const [persons, setPersons] = useState([]);
     const [newName, setNewName] = useState("");
     const [newNumber, setNewNumber] = useState("");
     const [nameFilter, setNameFilter] = useState("");
+    const [addMessage, setAddedMessage] = useState("");
 
     useEffect(() => {
         personsService.getAll().then(initialPersons => {
@@ -48,6 +51,14 @@ const App = () => {
             name: titleCasedName,
             number: newNumber
         };
+
+        setAddedMessage(
+            `Added '${person.name}'`
+        )
+        setTimeout(() => {
+            setAddedMessage(null)
+        }, 5000)
+
         return person;
     };
 
@@ -56,7 +67,7 @@ const App = () => {
             p => p.name.toLowerCase() === newName.toLowerCase()
         );
         const wantsToUpdate = window.confirm(
-            `${person.name} is alrady added to the phonebook, ` +
+            `${person.name} is already added to the phonebook, ` +
             "replace the old number with a new one?"
         );
 
@@ -132,6 +143,7 @@ const App = () => {
         return (
             <div>
                 <h2>Phonebook</h2>
+                <Notifications message={addMessage} />
                 <Filter
                     handleFilterChange={event => handleChange(event, "nameFilter")}
                     value={nameFilter}
