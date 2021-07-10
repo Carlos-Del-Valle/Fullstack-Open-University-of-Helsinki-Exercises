@@ -4,3 +4,8 @@
     fontSize: 16;
 }
 
+.errorStyle {
+    color: red;
+    fontStyle: italic;
+    fontSize: 16;
+}

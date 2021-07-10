@@ -1,21 +1,6 @@
 {
   "persons": [
     {
-      "name": "Arto Hellas",
-      "number": "12345",
-      "id": 1
-    },
-    {
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523",
-      "id": 2
-    },
-    {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": 3
-    },
-    {
       "name": "Carlos Del Valle",
       "number": "0426877076",
       "id": 5
@@ -26,14 +11,14 @@
       "id": 6
     },
     {
-      "name": "Aaaa",
-      "number": "AAAA",
-      "id": 7
-    },
-    {
       "name": "Eeee",
       "number": "EEEE",
       "id": 8
+    },
+    {
+      "name": "Arto Hellas ",
+      "number": "123",
+      "id": 9
     }
   ]
 }

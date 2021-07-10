@@ -3,6 +3,7 @@ import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import Notifications from "./components/Notification";
+import ErrorNotifications from "./components/ErrorNotification";
 import personsService from "./services/persons";
 
 
@@ -12,6 +13,7 @@ const App = () => {
     const [newNumber, setNewNumber] = useState("");
     const [nameFilter, setNameFilter] = useState("");
     const [addMessage, setAddedMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         personsService.getAll().then(initialPersons => {
@@ -82,7 +84,16 @@ const App = () => {
                 })
                 .catch(error => {
                     console.error(error);
-                    alert(`The person ${person.name} does not exist on the server`);
+
+                    setErrorMessage(
+                        `The person ${person.name} does not exist on the server`
+
+                    )
+                    setTimeout(() => {
+                        setErrorMessage(null)
+                    }, 5000)
+
+
                     setPersons(persons.filter(p => p.id !== id));
                 });
         } else {
@@ -115,10 +126,20 @@ const App = () => {
 
         const removePersonWithId = id => {
             let deleted = true;
+
             personsService
                 .remove(id)
                 .catch(err => {
                     console.log(err);
+
+                    setErrorMessage(
+                        `The person does not exist on the server`
+
+                    )
+                    setTimeout(() => {
+                        setErrorMessage(null)
+                    }, 5000)
+
                     deleted = false;
                 })
                 .finally(() => {
@@ -144,6 +165,7 @@ const App = () => {
             <div>
                 <h2>Phonebook</h2>
                 <Notifications message={addMessage} />
+                <ErrorNotifications message={errorMessage} />
                 <Filter
                     handleFilterChange={event => handleChange(event, "nameFilter")}
                     value={nameFilter}
