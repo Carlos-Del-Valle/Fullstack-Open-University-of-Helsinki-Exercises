@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/index.css"],"names":[],"mappings":"AAAA,YACI,WAGJ,CAEA,wBAJI,gBAAiB,CACjB,WAOJ,CAJA,YACI,SAGJ","file":"main.7de8b6d3.chunk.css","sourcesContent":[".addedStyle {\n    color: green;\n    fontStyle: italic;\n    fontSize: 16;\n}\n\n.errorStyle {\n    color: red;\n    fontStyle: italic;\n    fontSize: 16;\n}\n"]}
